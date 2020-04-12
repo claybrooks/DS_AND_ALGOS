@@ -139,9 +139,9 @@ namespace Sort
     //std::mt19937 QuickSort<Container, Compare>::s_eng(s_random_device());
 
     template<typename Container>
-    using MaxQuickSortSort = QuickSort<Container, std::greater>;
+    using MaxQuickSort = QuickSort<Container, std::greater>;
 
     template<typename Container>
-    using MinQuickSortSort = QuickSort<Container, std::less>;
+    using MinQuickSort = QuickSort<Container, std::less>;
 }
 }

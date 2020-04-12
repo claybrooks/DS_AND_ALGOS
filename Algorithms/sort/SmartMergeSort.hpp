@@ -6,11 +6,10 @@ namespace Algorithms
 {
 namespace Sort
 {
-    template<typename Container, template<typename, template<typename>typename> typename SmallSorter, template<typename> typename Compare>
+    template<typename Container, typename SmallSorter, template<typename> typename Compare>
     class SmartMergeSort
     {
         using MERGE_SORT = MergeSort<Container, Compare>;
-        using SMALL_SORT = SmallSorter<Container, Compare>;
 
     public:
 
@@ -62,7 +61,7 @@ namespace Sort
 
             if (end - start <= 40)
             {
-                SMALL_SORT::Sort(A, start, end);
+                SmallSorter::Sort(A, start, end);
             }
             else
             {
@@ -75,10 +74,10 @@ namespace Sort
         }
     };
 
-    template<typename Container, template<typename, template<typename> typename> typename SmallSorter>
+    template<typename Container, typename SmallSorter>
     using MaxSmartMergeSort = SmartMergeSort<Container, SmallSorter, std::greater>;
 
-    template<typename Container, template<typename, template<typename> typename> typename SmallSorter>
+    template<typename Container, typename SmallSorter>
     using MinSmartMergeSort = SmartMergeSort<Container, SmallSorter, std::less>;
 }
 }

@@ -233,11 +233,11 @@ namespace Heaps {
 
             size_t BinaryHeap_size = m_storage.size();
 
-            if (left < BinaryHeap_size && m_heap_property(m_storage[left], m_storage[target]))
+            if (left < BinaryHeap_size && m_heap_property(m_storage[target], m_storage[left]))
             {
                 target = left;
             }
-            if (right < BinaryHeap_size && m_heap_property(m_storage[right], m_storage[target]))
+            if (right < BinaryHeap_size && m_heap_property(m_storage[target], m_storage[right]))
             {
                 target = right;
             }
@@ -274,7 +274,7 @@ namespace Heaps {
             }*/
 
             // Iterate until this condition is met
-            bool done = true;
+            bool done = false;
 
             do
             {
