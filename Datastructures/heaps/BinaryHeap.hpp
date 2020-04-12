@@ -65,15 +65,18 @@ namespace Heaps {
             m_storage(data),
             m_bypass_aug_key_exception(false)
         {
-            // size_t is unsigned, so cant check below 0.  Start 1 above the bound, so that way --i places us at
-            // n/2 -> 0, and the while (i>0) check will fail on i == 0, but we would have already BinaryHeapified 0
-            size_t i = (data.size() / 2);
-            do
-            {
-                --i;
-                BubbleDown(i);
-            }
-            while (i > 0);
+            ConstructorBodyInit();
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        BinaryHeap(std::vector<T>&& data) :
+            m_storage(data),
+            m_bypass_aug_key_exception(false)
+        {
+            ConstructorBodyInit();
         }
 
         /***************************************************************************************************************
@@ -220,6 +223,22 @@ namespace Heaps {
 
     protected:
     private:
+        
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void ConstructorBodyInit()
+        {
+            // size_t is unsigned, so cant check below 0.  Start 1 above the bound, so that way --i places us at
+            // n/2 -> 0, and the while (i>0) check will fail on i == 0, but we would have already BinaryHeapified 0
+            size_t i = (m_storage.size() / 2);
+            do
+            {
+                --i;
+                BubbleDown(i);
+            } while (i > 0);
+        }
 
         /***************************************************************************************************************
         *

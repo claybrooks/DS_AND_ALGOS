@@ -16,6 +16,8 @@
 #include "MaxCrossingSubarray.hpp"
 #include "SmartMergeSort.hpp"
 #include "QuickSort.hpp"
+#include "HeapSort.hpp"
+
 #include <thread>
 
 using namespace Datastructures::Heaps;
@@ -499,7 +501,7 @@ void TestSort(const std::string& name, const Container& unsorted)
     std::cout << ss.str();
 
     //PrintArray(to_sort);
-    //std::cout << '\n';
+    std::cout << '\n';
 }
 
 int main()
@@ -549,7 +551,11 @@ int main()
     */
 
     // Randomize
+#ifdef DEBUG
+    unsigned int count = 100;
+#else
     unsigned int count = 1000000;
+#endif
 
     using Container = std::vector<unsigned int>;
     using ContainerCross = std::vector<int>;
@@ -566,11 +572,13 @@ int main()
     test = test + 1;
     //TestSort<MaxBubbleSort<Container>>                      ("BubbleSort",      to_sort);
     //TestSort<MaxInsertionSort<Container>>                   ("InsertionSort",   to_sort);
-    //TestSort<MaxMergeSort<Container>>                       ("MergeSort",       to_sort);
-    TestSort<MaxSmartMergeSort<Container, InsertionSort>>   ("SmartMergeSort (using Insertion)", to_sort);
-    TestSort<MaxSmartMergeSort<Container, QuickSort>>       ("SmartMergeSort (using Quick)", to_sort);
-    TestSort<MaxSmartMergeSort<Container, BubbleSort>>      ("SmartMergeSort (using Bubble)", to_sort);
-    //TestSort<MaxQuickSortSort<Container>>                   ("QuickSort",       to_sort);
+    TestSort<MaxMergeSort<Container>>                                           ("MergeSort",       to_sort);
+    TestSort<MaxSmartMergeSort<Container, MaxInsertionSort<Container>>>         ("SmartMergeSort (using Insertion)", to_sort);
+    TestSort<MaxSmartMergeSort<Container, MaxQuickSort<Container>>>             ("SmartMergeSort (using Quick)", to_sort);
+    TestSort<MaxSmartMergeSort<Container, MaxBubbleSort<Container>>>            ("SmartMergeSort (using Bubble)", to_sort);
+    TestSort<MaxSmartMergeSort<Container, MaxHeapSort<Container, BinaryHeap>>>  ("SmartMergeSort (using HeapSort)", to_sort);
+    TestSort<MaxHeapSort<Container, BinaryHeap>>                                ("MaxHeapSort (using BinaryHeap)", to_sort);
+    TestSort<MaxQuickSort<Container>>                                           ("QuickSort",       to_sort);
 
     Algorithms::Search::ReturnType ret = Algorithms::Search::MaximumSubArray<ContainerCross>(cross);
     //std::cout << "From " << ret.start << " to " << ret.end << " with value " << ret.sum << '\n';

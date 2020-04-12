@@ -67,6 +67,11 @@ project "Datastructures"
 		runtime "Debug"
 		symbols "on"
 
+		defines
+		{
+			"DEBUG"
+		}
+
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "on"
@@ -119,6 +124,11 @@ project "Algorithms"
 		runtime "Debug"
 		symbols "on"
 
+		defines
+		{
+			"DEBUG"
+		}
+
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "on"
@@ -162,6 +172,11 @@ project "Test"
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
+
+		defines
+		{
+			"DEBUG"
+		}
 
 	filter "configurations:Release"
 		runtime "Release"
