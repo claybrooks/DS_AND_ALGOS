@@ -43,7 +43,7 @@ namespace Heaps {
         typename T,
         template<typename> class Compare
     >
-    class Heap {
+    class BinaryHeap {
     public:
 
         // Helpful using clause for external users
@@ -53,7 +53,7 @@ namespace Heaps {
         *
         *
         ***************************************************************************************************************/
-        Heap()
+        BinaryHeap()
         {
         }
 
@@ -61,10 +61,12 @@ namespace Heaps {
         *
         *
         ***************************************************************************************************************/
-        Heap(const std::vector<T>& data) : m_storage(data), m_bypass_aug_key_exception(false)
+        BinaryHeap(const std::vector<T>& data) :
+            m_storage(data),
+            m_bypass_aug_key_exception(false)
         {
             // size_t is unsigned, so cant check below 0.  Start 1 above the bound, so that way --i places us at
-            // n/2 -> 0, and the while (i>0) check will fail on i == 0, but we would have already heapified 0
+            // n/2 -> 0, and the while (i>0) check will fail on i == 0, but we would have already BinaryHeapified 0
             size_t i = (data.size() / 2);
             do
             {
@@ -121,7 +123,7 @@ namespace Heaps {
             // Remove the end element
             m_storage.pop_back();
 
-            // Heapify
+            // BinaryHeapify
             BubbleDown(0);
 
             return top;
@@ -142,16 +144,16 @@ namespace Heaps {
         ***************************************************************************************************************/
         void AugmentKey(size_t i, const T& val)
         {
-            // Beyond our heapsize
+            // Beyond our BinaryHeapsize
             if (i >= m_storage.size())
             {
-                throw Datastructures::Heaps::Exceptions::InvalidIndexException(i);
+                throw Exceptions::InvalidIndexException(i);
             } 
 
             // No thanks
-            if (!m_bypass_aug_key_exception && !m_heap_propertys(val, m_storage[i]))
+            if (!m_bypass_aug_key_exception && !m_heap_property(val, m_storage[i]))
             {
-                throw Datastructures::Heaps::Exceptions::InvalidKeyException<T>(val);
+                throw Exceptions::InvalidKeyException<T>(val);
             }
 
             // reset bypass
@@ -202,11 +204,11 @@ namespace Heaps {
 
             // We removed the back, just ignore
             if (i == m_storage.size()) { return; }
-            // We don't have to do anything for empty heaps or heaps of size 1
+            // We don't have to do anything for empty BinaryHeaps or BinaryHeaps of size 1
             if (m_storage.size() < 2) { return; }
 
             // now, bubble it up or bubble it down
-            if (m_heap_propertys(m_storage[i], m_storage[PARENT(i)]))
+            if (m_heap_property(m_storage[i], m_storage[PARENT(i)]))
             {
                 BubbleUp(i);
             }
@@ -229,13 +231,13 @@ namespace Heaps {
             size_t left     = LEFT(i);
             size_t right    = RIGHT(i);
 
-            size_t heap_size = m_storage.size();
+            size_t BinaryHeap_size = m_storage.size();
 
-            if (left < heap_size && m_heap_propertys(m_storage[left], m_storage[target]))
+            if (left < BinaryHeap_size && m_heap_property(m_storage[left], m_storage[target]))
             {
                 target = left;
             }
-            if (right < heap_size && m_heap_propertys(m_storage[right], m_storage[target]))
+            if (right < BinaryHeap_size && m_heap_property(m_storage[right], m_storage[target]))
             {
                 target = right;
             }
@@ -249,7 +251,7 @@ namespace Heaps {
         ***************************************************************************************************************/
         void BubbleUp(size_t i)
         {
-            while ((i != 0) && m_heap_propertys(m_storage[i], m_storage[PARENT(i)]))
+            while ((i != 0) && m_heap_property(m_storage[i], m_storage[PARENT(i)]))
             {
                 std::swap(m_storage[i], m_storage[PARENT(i)]);
                 i = PARENT(i);
@@ -294,24 +296,24 @@ namespace Heaps {
             } while (!done);
         }
 
-        // underlying storage of the heap
+        // underlying storage of the BinaryHeap
         std::vector<T> m_storage;
 
         // Used to remove items from the list.  Because the class is templated, it doesn't make sense to change the key value of the item
         // being removed, so just flip a flag and let the remove code handle it.  Also, this allows for the key value to remain untouched,
-        // which is good if the values in this heap are pointers
+        // which is good if the values in this BinaryHeap are pointers
         bool m_bypass_aug_key_exception;
 
         // Comparison operator used
-        // When using this like m_heap_property(A, B), on return of true, it's read like "The ordering of A and B currently satisfies heap property".
-        // On return of false, it's read as "A must be swapped with B to maintain heap property"
-        Compare<T> m_heap_propertys;
+        // When using this like m_BinaryHeap_property(A, B), on return of true, it's read like "The ordering of A and B currently satisfies BinaryHeap property".
+        // On return of false, it's read as "A must be swapped with B to maintain BinaryHeap property"
+        Compare<T> m_heap_property;
     };
 
     template<typename T>
-    using MaxHeap = Heap<T, std::greater>;
+    using MaxBinaryHeap = BinaryHeap<T, std::greater>;
 
     template<typename T>
-    using MinHeap = Heap<T, std::less>;
+    using MinBinaryHeap = BinaryHeap<T, std::less>;
 }
 }

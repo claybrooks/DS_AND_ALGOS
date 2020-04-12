@@ -1,4 +1,4 @@
-workspace "Datastructures"
+workspace "DS_AND_ALGO"
 	architecture "x86_64"
 	startproject "Test"
 
@@ -37,18 +37,15 @@ project "Datastructures"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
---	pchheader "hzpch.h"
---	pchsource "Hazel/src/hzpch.cpp"
-
 	files
 	{
 		"%{prj.name}/heaps/**.hpp",
 		"%{prj.name}/heaps/**.cpp",
+		"%{prj.name}/GenLib.cpp"
 	}
 
 	defines
 	{
-		
 	}
 
 	includedirs
@@ -57,6 +54,58 @@ project "Datastructures"
 
 	links 
 	{
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines
+		{
+		}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		runtime "Release"
+		optimize "on"
+
+project "Algorithms"
+	location "Algorithms"
+	kind "StaticLib"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/sort/**.hpp",
+		"%{prj.name}/sort/**.cpp",
+		"%{prj.name}/search/**.hpp",
+		"%{prj.name}/search/**.cpp",
+		"%{prj.name}/GenLib.cpp"
+	}
+
+	defines
+	{
+	}
+
+	includedirs
+	{
+		"Datastructures/heaps",
+	}
+
+	links 
+	{
+		"Datastructures"
 	}
 
 	filter "system:windows"
@@ -91,16 +140,20 @@ project "Test"
 	files
 	{
 		"%{prj.name}/main.cpp",
+		"%{prj.name}/HeapDriver.in"
 	}
 
 	includedirs
 	{
 		"Datastructures/heaps",
+		"Algorithms/sort",
+		"Algorithms/search"
 	}
 
 	links
 	{
-		"Datastructures"
+		"Datastructures",
+		"Algorithms"
 	}
 
 	filter "system:windows"

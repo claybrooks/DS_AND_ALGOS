@@ -1,6 +1,7 @@
 #include "FibonacciHeap.hpp"
-#include "Heap.hpp"
 #include "PairingHeap.hpp"
+#include "BinomialHeap.hpp"
+#include "BinaryHeap.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -9,7 +10,17 @@
 #include <chrono>
 #include <queue>
 
+#include "MergeSort.hpp"
+#include "InsertionSort.hpp"
+#include "BubbleSort.hpp"
+#include "MaxCrossingSubarray.hpp"
+#include "SmartMergeSort.hpp"
+#include "QuickSort.hpp"
+#include <thread>
+
 using namespace Datastructures::Heaps;
+using namespace Algorithms::Sort;
+using namespace Algorithms::Search;
 
 const std::vector<std::string> operations = {
     "Insert",
@@ -25,7 +36,7 @@ void PrintTimingInfo(
 {
     std::stringstream ss;
     ss << "Timing Info for " << name << '\n';
-    for (const std::string operation : operations)
+    for (const std::string& operation : operations)
     {
         ss  << '\t' << operation << '\n'
             << "\t\tNumber of Times Called: " << operation_count[operation] << '\n'
@@ -136,8 +147,10 @@ void TestHeap_LinkedList(const std::string& name, Heap& heap, bool min)
     std::chrono::high_resolution_clock::time_point start;
     std::chrono::high_resolution_clock::time_point end;
 
+    unsigned int count = 10;
+
     std::string action = "Insert";
-    for (unsigned int i = 0; i < 250000; i++)
+    for (unsigned int i = 0; i < count; i++)
     {
         int val = rand() % 100;
         start = std::chrono::high_resolution_clock::now();
@@ -152,9 +165,9 @@ void TestHeap_LinkedList(const std::string& name, Heap& heap, bool min)
     }
 
     action = "AugmentKey";
-    for (unsigned int i = 0; i < 250000; i++)
+    for (unsigned int i = 0; i < count; i++)
     {
-        size_t idx = rand() % 249999;
+        size_t idx = rand() % count;
         int delta = rand() % 1000 + 1;
 
         Heap::NODE_TYPE node = key_to_node[i];
@@ -168,7 +181,7 @@ void TestHeap_LinkedList(const std::string& name, Heap& heap, bool min)
     }
 
     action = "ExtractTop";
-    for (unsigned int i = 0; i < 125000; i++)
+    for (unsigned int i = 0; i < (count >> 1); i++)
     {
         start = std::chrono::high_resolution_clock::now();
         Heap::NODE_TYPE node = heap.ExtractTop();
@@ -294,21 +307,6 @@ void TestHeap_StlPriorityQueue(const std::string& name, Heap& heap, bool min)
         ++operation_count[action];
     }
 
-    /*
-    action = "AugmentKey";
-    for (unsigned int i = 0; i < 250000; i++)
-    {
-        size_t idx = rand() % 249999;
-        int delta = rand() % 1000 + 1;
-
-        start = std::chrono::high_resolution_clock::now();
-        heap.DeltaKey(idx, min ? -1 * delta : delta);
-        end = std::chrono::high_resolution_clock::now();
-
-        timing_info[action] += std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        ++operation_count[action];
-    }*/
-
     action = "ExtractTop";
     for (unsigned int i = 0; i < 125000; i++)
     {
@@ -320,35 +318,18 @@ void TestHeap_StlPriorityQueue(const std::string& name, Heap& heap, bool min)
         ++operation_count[action];
     }
 
-    /*
-    action = "Remove";
-    size_t num_left = 125000;
-    for (unsigned int i = 0; i < 125000; i++)
-    {
-        size_t idx = rand() % num_left;
-        --num_left;
-
-        start = std::chrono::high_resolution_clock::now();
-        heap.Remove(idx);
-        end = std::chrono::high_resolution_clock::now();
-
-        timing_info[action] += std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        ++operation_count[action];
-    }
-    */
-
     PrintTimingInfo(name, timing_info, operation_count);
 }
 
-void TestMaxHeap()
+void TestMaxBinaryHeap()
 {
-    MaxHeap<int> heap;
+    BinaryHeap<int, std::greater> heap;
     TestHeap_Array("MaxHeap", heap, false);
 }
 
-void TestMinHeap()
+void TestMinBinaryHeap()
 {
-    MinHeap<int> heap;
+    MinBinaryHeap<int> heap;
     TestHeap_Array("MinHeap", heap, true);
 }
 
@@ -381,6 +362,26 @@ void TestMinFibonacciHeap()
     MinFibonacciHeap<int> fib_heap2;
     TestHeap("Min Fibonacci Heap with Random Operations", fib_heap2, true);
 }
+
+/*
+void TestMaxBinomialHeap()
+{
+    MaxBinomialHeap<int> bin_heap;
+    TestHeap_LinkedList("Max Binomial Heap with Consecutive Operations", bin_heap, false);
+
+    MaxFibonacciHeap<int> bin_heap2;
+    TestHeap("Max Binomial Heap with Random Operations", bin_heap2, false);
+}
+
+void TestMinBinomialHeap()
+{
+    MinBinomialHeap<int> bin_heap;
+    TestHeap_LinkedList("Min Binomial Heap with Consecutive Operations", bin_heap, true);
+
+    MinBinomialHeap<int> bin_heap2;
+    TestHeap("Min Binomial Heap with Random Operations", bin_heap2, true);
+}
+*/
 
 void TestMaxPairingHeap()
 {
@@ -460,6 +461,47 @@ void GenRandomHeapData(unsigned int num_operations, std::vector<std::string>& ou
     }
 }
 
+template<typename Container>
+void PrintArray(const Container& container)
+{
+    std::stringstream ss;
+    bool first = true;
+    for (const auto& next : container)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            ss << ',';
+        }
+
+        ss << next;
+    }
+
+    std::cout << ss.str() << '\n';
+}
+
+template<typename Sorter, typename Container>
+void TestSort(const std::string& name, const Container& unsorted)
+{
+    std::chrono::high_resolution_clock::time_point start;
+    std::chrono::high_resolution_clock::time_point end;
+
+    std::stringstream ss;
+
+    Container to_sort(unsorted);
+    start = std::chrono::high_resolution_clock::now();
+    Sorter::Sort(to_sort);
+    end = std::chrono::high_resolution_clock::now();
+    ss << name << " Total Time: " << std::chrono::duration<double, std::milli>(end - start).count() << "(ms)\n";
+    std::cout << ss.str();
+
+    //PrintArray(to_sort);
+    //std::cout << '\n';
+}
+
 int main()
 {
     // Sed the rand
@@ -488,9 +530,13 @@ int main()
 
         return 0;
     }
-    
-    TestMaxHeap();
-    TestMinHeap();
+
+    /*
+    //TestMaxBinomialHeap();
+    //TestMinBinomialHeap();
+
+    TestMaxBinaryHeap();
+    TestMinBinaryHeap();
     
     TestMinStlPriorityQueue();
     TestMaxStlPriorityQueue();
@@ -500,7 +546,35 @@ int main()
 
     TestMaxPairingHeap();
     TestMinPairingHeap();
+    */
 
+    // Randomize
+    unsigned int count = 1000000;
+
+    using Container = std::vector<unsigned int>;
+    using ContainerCross = std::vector<int>;
+
+    Container to_sort;
+    for (unsigned int i = 0; i < count; ++i)
+    {
+        to_sort.push_back(rand() % count);
+    }
+    ContainerCross cross      = { -2, 4, -3, 5, 6, -10, 1, 0, 0, 100, 4 };
+
+    std::vector<int>::size_type test = 0;
+    test = test - 1;
+    test = test + 1;
+    //TestSort<MaxBubbleSort<Container>>                      ("BubbleSort",      to_sort);
+    //TestSort<MaxInsertionSort<Container>>                   ("InsertionSort",   to_sort);
+    //TestSort<MaxMergeSort<Container>>                       ("MergeSort",       to_sort);
+    TestSort<MaxSmartMergeSort<Container, InsertionSort>>   ("SmartMergeSort (using Insertion)", to_sort);
+    TestSort<MaxSmartMergeSort<Container, QuickSort>>       ("SmartMergeSort (using Quick)", to_sort);
+    TestSort<MaxSmartMergeSort<Container, BubbleSort>>      ("SmartMergeSort (using Bubble)", to_sort);
+    //TestSort<MaxQuickSortSort<Container>>                   ("QuickSort",       to_sort);
+
+    Algorithms::Search::ReturnType ret = Algorithms::Search::MaximumSubArray<ContainerCross>(cross);
+    //std::cout << "From " << ret.start << " to " << ret.end << " with value " << ret.sum << '\n';
+    
     int temp;
     std::cin >> temp;
 

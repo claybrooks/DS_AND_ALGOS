@@ -4,9 +4,7 @@
  * STL Includes
  */
 #include <functional>
-#include <limits>
 #include <math.h>
-#include <string>
 
 #include "Internal/HeapExceptions.hpp"
 
@@ -31,9 +29,15 @@ namespace Heaps {
             * 
             * 
             ***********************************************************************************************************/
-            Node(const T& keyVal)
-              : left(this), right(this), parent(nullptr), child(nullptr),
-                degree(0), mark(false), key(keyVal), being_removed(false)
+            Node(const T& keyVal): 
+                left(this), 
+                right(this),
+                parent(nullptr),
+                child(nullptr),
+                degree(0), 
+                mark(false), 
+                key(keyVal), 
+                being_removed(false)
             {
             }
 
@@ -219,16 +223,15 @@ namespace Heaps {
         ***************************************************************************************************************/
         void Remove(NODE_TYPE node)
         {
-            if (node == m_top)
+            // if the node being removed is not the top, make it the top
+            if (node != m_top)
             {
-                ExtractTopImpl();
-            }
-            else
-            {            // Mark the node for removal and then call augment key on it.  Then extract top.
                 node->being_removed = true;
-                AugmentKeyImpl(node, node->key);
-                ExtractTopImpl();
+                AugmentKeyImpl(node, node->key);;
             }
+            
+            // Remove the node
+            ExtractTopImpl();
         }
 
     private:
@@ -309,7 +312,7 @@ namespace Heaps {
             }
 
             // Ensure that the node returned is always the max/min
-            if (compare(secondary->key, main->key))
+            if (m_heap_property(secondary->key, main->key))
             {
                 std::swap(main, secondary);
             }
@@ -378,10 +381,12 @@ namespace Heaps {
         ***************************************************************************************************************/
         void OrphanAll(NODE_TYPE node)
         {
-            Iterate(node, [this](NODE_TYPE next)
+            NODE_TYPE iter = node;
+            do 
             {
-                next->parent = nullptr;
-            });
+                iter->parent = nullptr;
+                iter = iter->right;
+            } while (iter != node);
         }
 
         /***************************************************************************************************************
@@ -410,7 +415,7 @@ namespace Heaps {
                         break;
                     }
 
-                    if (compare(child->key, parent->key)) 
+                    if (m_heap_property(child->key, parent->key)) 
                     {
                         std::swap(parent, child);
                     }
@@ -452,7 +457,7 @@ namespace Heaps {
         void AugmentKeyImpl(NODE_TYPE node, const T& k)
         {
             // If the being_removed flag is set, then this guy is being removed.
-            if (!node->being_removed && !compare(k, node->key))
+            if (!node->being_removed && !m_heap_property(k, node->key))
             {
                 throw Datastructures::Heaps::Exceptions::InvalidKeyException<T>(k);
             }
@@ -463,7 +468,7 @@ namespace Heaps {
             NODE_TYPE parent = node->parent;
 
             // The node being updated is larger than the parent, or this node is being removed
-            if (parent && (node->being_removed || compare(node->key, parent->key)))
+            if (parent && (node->being_removed || m_heap_property(node->key, parent->key)))
             {
                 // Do the cutting
                 Cut(node, parent);
@@ -471,7 +476,7 @@ namespace Heaps {
             }
 
             // Update the top pointer if new node is larger or being removed
-            if (node->being_removed || compare(node->key, m_top->key))
+            if (node->being_removed || m_heap_property(node->key, m_top->key))
             {
                 m_top = node;
             }
@@ -538,18 +543,22 @@ namespace Heaps {
         }
 
         /***************************************************************************************************************
-        * 
-        * 
+        *
+        *
         ***************************************************************************************************************/
         void UpdateMax()
         {
-            Iterate(m_top, [this](NODE_TYPE next)
+            NODE_TYPE start = m_top;
+            NODE_TYPE iter = m_top;
+            do
             {
-                if (compare(next->key, m_top->key))
+                if (m_heap_property(iter->key, m_top->key))
                 {
-                    m_top = next;
+                    m_top = iter;
                 }
-            });
+
+                iter = iter->right;
+            } while (iter != start);
         }
 
         /***************************************************************************************************************
@@ -575,25 +584,6 @@ namespace Heaps {
             } while (iter != node);
         }
 
-        /***************************************************************************************************************
-        * 
-        * 
-        ***************************************************************************************************************/
-        void Iterate(NODE_TYPE node, std::function<void(NODE_TYPE next)> func)
-        {
-            // Don't try if node is nullptr
-            if (!node) {
-                return;
-            }
-
-            NODE_TYPE iter = node;
-            do 
-            {
-                func(iter);
-                iter = iter->right;
-            } while (iter != node);
-        }
-
         // How many things are in this heap
         unsigned int m_count;
 
@@ -606,7 +596,7 @@ namespace Heaps {
         NODE_TYPE m_top;
 
         // Comparison function to determine max/min heap
-        Compare<T> compare;
+        Compare<T> m_heap_property;
     };
 
     template <typename T>

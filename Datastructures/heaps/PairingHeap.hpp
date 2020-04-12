@@ -294,7 +294,7 @@ namespace Heaps {
             if (!secondary) { return main; }
 
             // Ensure that the node returned is always the max/min
-            if (compare(secondary->key, main->key))
+            if (m_heap_property(secondary->key, main->key))
             {
                 std::swap(main, secondary);
             }
@@ -427,7 +427,7 @@ namespace Heaps {
         ***************************************************************************************************************/
         void AugmentKeyImpl(NODE_TYPE node, const T& k)
         {
-            if (!compare(k, node->key))
+            if (!m_heap_property(k, node->key))
             {
                 throw Datastructures::Heaps::Exceptions::InvalidKeyException<T>(k);
             }
@@ -516,7 +516,7 @@ namespace Heaps {
         NODE_TYPE m_top;
 
         // Comparison function to determine max/min heap
-        Compare<T> compare;
+        Compare<T> m_heap_property;
     };
 
     template <typename T>
