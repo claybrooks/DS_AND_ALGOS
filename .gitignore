@@ -34,3 +34,6 @@
 build/
 
 *.vcxproj*
+.vs/**
+.vscode/**
+*.sln
