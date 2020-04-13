@@ -1,6 +1,6 @@
 #pragma once
 
-#include <algorithm>
+#include "Sort.hpp"
 
 namespace Algorithms
 {
@@ -46,9 +46,9 @@ namespace Sort
     };
 
     template<typename Container>
-    using MaxBubbleSort = BubbleSort<Container, std::greater>;
+    using IncreasingBubbleSort = BubbleSort<Container, increasing>;
 
     template<typename Container>
-    using MinBubbleSort = BubbleSort<Container, std::less>;
+    using DecreasingBubbleSort = BubbleSort<Container, decreasing>;
 }
 }

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "MergeSort.hpp"
+#include "Sort.hpp"
+
 
 namespace Algorithms
 {
@@ -75,9 +77,9 @@ namespace Sort
     };
 
     template<typename Container, typename SmallSorter>
-    using MaxSmartMergeSort = SmartMergeSort<Container, SmallSorter, std::greater>;
+    using IncreasingSmartMergeSort = SmartMergeSort<Container, SmallSorter, increasing>;
 
     template<typename Container, typename SmallSorter>
-    using MinSmartMergeSort = SmartMergeSort<Container, SmallSorter, std::less>;
+    using DecreasingSmartMergeSort = SmartMergeSort<Container, SmallSorter, decreasing>;
 }
 }

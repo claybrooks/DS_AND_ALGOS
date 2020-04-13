@@ -500,7 +500,9 @@ void TestSort(const std::string& name, const Container& unsorted)
     ss << name << " Total Time: " << std::chrono::duration<double, std::milli>(end - start).count() << "(ms)\n";
     std::cout << ss.str();
 
-    //PrintArray(to_sort);
+#ifdef DEBUG
+    PrintArray(to_sort);
+#endif
     std::cout << '\n';
 }
 
@@ -552,7 +554,7 @@ int main()
 
     // Randomize
 #ifdef DEBUG
-    unsigned int count = 100;
+    unsigned int count = 10;
 #else
     unsigned int count = 1000000;
 #endif
@@ -570,15 +572,17 @@ int main()
     std::vector<int>::size_type test = 0;
     test = test - 1;
     test = test + 1;
-    //TestSort<MaxBubbleSort<Container>>                      ("BubbleSort",      to_sort);
-    //TestSort<MaxInsertionSort<Container>>                   ("InsertionSort",   to_sort);
-    TestSort<MaxMergeSort<Container>>                                           ("MergeSort",       to_sort);
-    TestSort<MaxSmartMergeSort<Container, MaxInsertionSort<Container>>>         ("SmartMergeSort (using Insertion)", to_sort);
-    TestSort<MaxSmartMergeSort<Container, MaxQuickSort<Container>>>             ("SmartMergeSort (using Quick)", to_sort);
-    TestSort<MaxSmartMergeSort<Container, MaxBubbleSort<Container>>>            ("SmartMergeSort (using Bubble)", to_sort);
-    TestSort<MaxSmartMergeSort<Container, MaxHeapSort<Container, BinaryHeap>>>  ("SmartMergeSort (using HeapSort)", to_sort);
-    TestSort<MaxHeapSort<Container, BinaryHeap>>                                ("MaxHeapSort (using BinaryHeap)", to_sort);
-    TestSort<MaxQuickSort<Container>>                                           ("QuickSort",       to_sort);
+#ifdef DEBUG
+    TestSort<IncreasingBubbleSort<Container>>                                               ("BubbleSort",                          to_sort);
+    TestSort<IncreasingInsertionSort<Container>>                                            ("InsertionSort",                       to_sort);
+#endif
+    TestSort<IncreasingHeapSort<Container, BinaryHeap>>                                     ("MaxHeapSort (using BinaryHeap)",      to_sort);
+    TestSort<IncreasingMergeSort<Container>>                                                ("MergeSort",                           to_sort);
+    TestSort<IncreasingSmartMergeSort<Container, IncreasingInsertionSort<Container>>>       ("SmartMergeSort (using Insertion)",    to_sort);
+    TestSort<IncreasingSmartMergeSort<Container, IncreasingQuickSort<Container>>>           ("SmartMergeSort (using Quick)",        to_sort);
+    TestSort<IncreasingSmartMergeSort<Container, IncreasingBubbleSort<Container>>>          ("SmartMergeSort (using Bubble)",       to_sort);
+    TestSort<IncreasingSmartMergeSort<Container, IncreasingHeapSort<Container, BinaryHeap>>>("SmartMergeSort (using HeapSort)",     to_sort);
+    TestSort<IncreasingQuickSort<Container>>                                                ("QuickSort",                           to_sort);
 
     Algorithms::Search::ReturnType ret = Algorithms::Search::MaximumSubArray<ContainerCross>(cross);
     //std::cout << "From " << ret.start << " to " << ret.end << " with value " << ret.sum << '\n';

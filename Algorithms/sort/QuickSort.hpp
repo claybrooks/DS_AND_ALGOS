@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MergeSort.hpp"
+#include "Sort.hpp"
 #include <random>
 
 namespace Algorithms
@@ -131,17 +131,10 @@ namespace Sort
     template<typename Container, template<typename> typename Compare>
     Compare<typename Container::value_type> QuickSort<Container, Compare>::s_compare;
 
-    // Init randoms
-    //template<typename Container, template<typename> typename Compare>
-    //std::random_device QuickSort<Container, Compare>::s_random_device;
-
-    //template<typename Container, template<typename> typename Compare>
-    //std::mt19937 QuickSort<Container, Compare>::s_eng(s_random_device());
+    template<typename Container>
+    using IncreasingQuickSort = QuickSort<Container, increasing>;
 
     template<typename Container>
-    using MaxQuickSort = QuickSort<Container, std::greater>;
-
-    template<typename Container>
-    using MinQuickSort = QuickSort<Container, std::less>;
+    using DecreasingQuickSort = QuickSort<Container, decreasing>;
 }
 }

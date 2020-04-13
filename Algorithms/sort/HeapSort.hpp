@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Sort.hpp"
+
 namespace Algorithms
 {
 namespace Sort
@@ -30,7 +32,7 @@ namespace Sort
             const typename Container::size_type& end
         )
         {
-            Heap<Container::value_type, Compare> sorter(Container(A.cbegin() + start, A.cbegin() + end));
+            Heap<Container::value_type, Compare> sorter(Container(A.cbegin() + start, A.cbegin() + end + 1));
 
             Container::size_type i = 0;
             while (!sorter.Empty())
@@ -42,9 +44,9 @@ namespace Sort
     };
 
     template<typename Container, template<typename, template<typename> typename> typename Heap>
-    using MaxHeapSort = HeapSort<Container, Heap, std::greater>;
+    using IncreasingHeapSort = HeapSort<Container, Heap, increasing>;
 
     template<typename Container, template<typename, template<typename> typename> typename Heap>
-    using MinHeapSort = HeapSort<Container, Heap, std::less>;
+    using DecreasingHeapSort = HeapSort<Container, Heap, decreasing>;
 }
 }

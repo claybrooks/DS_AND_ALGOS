@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Sort.hpp"
+
 namespace Algorithms
 {
 namespace Sort
@@ -56,9 +58,9 @@ namespace Sort
     Compare<typename Container::value_type> InsertionSort<Container, Compare>::s_compare;
 
     template<typename Container>
-    using MaxInsertionSort = InsertionSort<Container, std::greater>;
+    using IncreasingInsertionSort = InsertionSort<Container, increasing>;
 
     template<typename Container>
-    using MinInsertionSort = InsertionSort<Container, std::less>;
+    using DecreasingInsertionSort = InsertionSort<Container, decreasing>;
 }
 }
