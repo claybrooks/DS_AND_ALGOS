@@ -1,14 +1,7 @@
 #pragma once
 
-/**
- * STL Includes
- */
-#include <functional>
-#include <limits>
+#include "Heap.hpp"
 #include <math.h>
-#include <string>
-
-#include "Internal/HeapExceptions.hpp"
 
 namespace Datastructures {
 namespace Heaps {
@@ -520,9 +513,9 @@ namespace Heaps {
     };
 
     template <typename T>
-    using MaxPairingHeap = PairingHeap<T, std::greater>;
+    using MaxPairingHeap = PairingHeap<T, max_heap>;
 
     template <typename T>
-    using MinPairingHeap = PairingHeap<T, std::less>;
+    using MinPairingHeap = PairingHeap<T, min_heap>;
 }
 }

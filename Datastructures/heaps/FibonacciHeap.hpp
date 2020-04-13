@@ -1,12 +1,7 @@
 #pragma once
 
-/**
- * STL Includes
- */
-#include <functional>
+#include "Heap.hpp"
 #include <math.h>
-
-#include "Internal/HeapExceptions.hpp"
 
 namespace Datastructures {
 namespace Heaps {
@@ -600,9 +595,9 @@ namespace Heaps {
     };
 
     template <typename T>
-    using MaxFibonacciHeap = FibonacciHeap<T, std::greater>;
+    using MaxFibonacciHeap = FibonacciHeap<T, max_heap>;
 
     template <typename T>
-    using MinFibonacciHeap = FibonacciHeap<T, std::less>;
+    using MinFibonacciHeap = FibonacciHeap<T, min_heap>;
 }
 }

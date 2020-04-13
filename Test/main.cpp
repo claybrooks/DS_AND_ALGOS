@@ -6,9 +6,10 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-#include<time.h>
+#include <time.h>
 #include <chrono>
 #include <queue>
+#include <unordered_map>
 
 #include "MergeSort.hpp"
 #include "InsertionSort.hpp"
@@ -17,8 +18,6 @@
 #include "SmartMergeSort.hpp"
 #include "QuickSort.hpp"
 #include "HeapSort.hpp"
-
-#include <thread>
 
 using namespace Datastructures::Heaps;
 using namespace Algorithms::Sort;

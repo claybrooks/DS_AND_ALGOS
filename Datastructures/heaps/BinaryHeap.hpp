@@ -1,11 +1,7 @@
 #pragma once
 
-#include <algorithm>
+#include "Heap.hpp"
 #include <vector>
-#include <iostream>
-#include <type_traits>
-
-#include "Internal/HeapExceptions.hpp"
 
 namespace Datastructures {
 namespace Heaps {
@@ -331,9 +327,9 @@ namespace Heaps {
     };
 
     template<typename T>
-    using MaxBinaryHeap = BinaryHeap<T, std::greater>;
+    using MaxBinaryHeap = BinaryHeap<T, max_heap>;
 
     template<typename T>
-    using MinBinaryHeap = BinaryHeap<T, std::less>;
+    using MinBinaryHeap = BinaryHeap<T, min_heap>;
 }
 }
