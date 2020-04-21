@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sort.hpp"
+#include "Sorter.hpp"
 
 namespace Algorithms
 {
@@ -10,6 +10,8 @@ namespace Sort
     class HeapSort
     {
     public:
+        using compare = Compare<typename Container::value_type>;
+
         static inline void Sort(
             Container& A
         )
@@ -34,7 +36,7 @@ namespace Sort
         {
             Heap<Container::value_type, Compare> sorter(Container(A.cbegin() + start, A.cbegin() + end + 1));
 
-            Container::size_type i = 0;
+            Container::size_type i = start;
             while (!sorter.Empty())
             {
                 A[i] = sorter.ExtractTop();

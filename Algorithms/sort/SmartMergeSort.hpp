@@ -1,8 +1,7 @@
 #pragma once
 
 #include "MergeSort.hpp"
-#include "Sort.hpp"
-
+#include "Sorter.hpp"
 
 namespace Algorithms
 {
@@ -14,6 +13,7 @@ namespace Sort
         using MERGE_SORT = MergeSort<Container, Compare>;
 
     public:
+        using compare = Compare<typename Container::value_type>;
 
         static inline void Sort(
             Container& A

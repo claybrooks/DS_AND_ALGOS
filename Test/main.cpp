@@ -1,8 +1,3 @@
-#include "FibonacciHeap.hpp"
-#include "PairingHeap.hpp"
-#include "BinomialHeap.hpp"
-#include "BinaryHeap.hpp"
-
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -11,13 +6,25 @@
 #include <queue>
 #include <unordered_map>
 
+// Datastructures
+#include "FibonacciHeap.hpp"
+#include "PairingHeap.hpp"
+#include "BinomialHeap.hpp"
+#include "BinaryHeap.hpp"
+
+// Sorting
 #include "MergeSort.hpp"
 #include "InsertionSort.hpp"
 #include "BubbleSort.hpp"
-#include "MaxCrossingSubarray.hpp"
 #include "SmartMergeSort.hpp"
+//#include "SmartQuickSort.hpp"
 #include "QuickSort.hpp"
 #include "HeapSort.hpp"
+#include "CountingSort.hpp"
+
+// Searching
+#include "MaxCrossingSubarray.hpp"
+#include "OrderStatistic.hpp"
 
 using namespace Datastructures::Heaps;
 using namespace Algorithms::Sort;
@@ -497,12 +504,32 @@ void TestSort(const std::string& name, const Container& unsorted)
     Sorter::Sort(to_sort);
     end = std::chrono::high_resolution_clock::now();
     ss << name << " Total Time: " << std::chrono::duration<double, std::milli>(end - start).count() << "(ms)\n";
-    std::cout << ss.str();
 
+    bool valid = validate_sort<Container, Sorter::compare>(to_sort);
+    ss << "Sorting Valid: " << (valid ? "True" : "False") << '\n';
+
+    std::cout << ss.str();
 #ifdef DEBUG
-    PrintArray(to_sort);
+    //PrintArray(to_sort);
 #endif
     std::cout << '\n';
+}
+
+template<typename Container, typename Compare>
+bool validate_sort(const Container& A)
+{
+    Compare comp;
+
+    for (Container::size_type i = 1; i < A.size(); ++i)
+    {
+        if ((A[i] != A[i-1]) && !comp(A[i], A[i - 1]))
+        {
+            std::cout << "crap\n";
+            return false;
+        }
+    }
+
+    return true;
 }
 
 int main()
@@ -553,38 +580,57 @@ int main()
 
     // Randomize
 #ifdef DEBUG
-    unsigned int count = 10;
+    const unsigned int count = 100;
+    const unsigned int range = 100;
 #else
-    unsigned int count = 1000000;
+    const unsigned int count = 1000000;
+    const unsigned int range = 10000;
 #endif
 
     using Container = std::vector<unsigned int>;
-    using ContainerCross = std::vector<int>;
+    using SignedContainer = std::vector<int>;
 
     Container to_sort;
+    SignedContainer to_search;
     for (unsigned int i = 0; i < count; ++i)
     {
-        to_sort.push_back(rand() % count);
+        to_sort.push_back(rand() % range);
+        to_search.push_back((rand() % range) * ((rand() % 2) ? -1 : 1));
     }
-    ContainerCross cross      = { -2, 4, -3, 5, 6, -10, 1, 0, 0, 100, 4 };
 
-    std::vector<int>::size_type test = 0;
-    test = test - 1;
-    test = test + 1;
 #ifdef DEBUG
     TestSort<IncreasingBubbleSort<Container>>                                               ("BubbleSort",                          to_sort);
-    TestSort<IncreasingInsertionSort<Container>>                                            ("InsertionSort",                       to_sort);
+    TestSort<IncreasingInsertionSort<Container>>("InsertionSort", to_sort);
+    TestSort<IncreasingCountingSort<Container, range>>("CountingSort", to_sort);
 #endif
+    TestSort<IncreasingQuickSort<Container>>                                                ("QuickSort",                           to_sort);
     TestSort<IncreasingHeapSort<Container, BinaryHeap>>                                     ("MaxHeapSort (using BinaryHeap)",      to_sort);
     TestSort<IncreasingMergeSort<Container>>                                                ("MergeSort",                           to_sort);
     TestSort<IncreasingSmartMergeSort<Container, IncreasingInsertionSort<Container>>>       ("SmartMergeSort (using Insertion)",    to_sort);
     TestSort<IncreasingSmartMergeSort<Container, IncreasingQuickSort<Container>>>           ("SmartMergeSort (using Quick)",        to_sort);
     TestSort<IncreasingSmartMergeSort<Container, IncreasingBubbleSort<Container>>>          ("SmartMergeSort (using Bubble)",       to_sort);
     TestSort<IncreasingSmartMergeSort<Container, IncreasingHeapSort<Container, BinaryHeap>>>("SmartMergeSort (using HeapSort)",     to_sort);
-    TestSort<IncreasingQuickSort<Container>>                                                ("QuickSort",                           to_sort);
 
-    Algorithms::Search::ReturnType ret = Algorithms::Search::MaximumSubArray<ContainerCross>(cross);
-    //std::cout << "From " << ret.start << " to " << ret.end << " with value " << ret.sum << '\n';
+    /*
+    TestSort<IncreasingSmartQuickSort<Container, IncreasingInsertionSort<Container>>>       ("SmartQuickSort (using Insertion)",    to_sort);
+    TestSort<IncreasingSmartQuickSort<Container, IncreasingBubbleSort<Container>>>          ("SmartQuickSort (using Bubble)",       to_sort);
+    TestSort<IncreasingSmartQuickSort<Container, IncreasingHeapSort<Container, BinaryHeap>>>("SmartQuickSort (using HeapSort)",     to_sort);
+    */
+    std::chrono::high_resolution_clock::time_point start;
+    std::chrono::high_resolution_clock::time_point end;
+
+    start = std::chrono::high_resolution_clock::now();
+    std::sort(to_sort.begin(), to_sort.end());
+    end = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Stl Sort" << " Total Time: " << std::chrono::duration<double, std::milli>(end - start).count() << "(ms)\n";
+
+    std::cout << "\nFinding\n";
+    MaximumSubarray<SignedContainer>::ReturnType ret = MaximumSubarray<SignedContainer>::Search(to_search);
+    std::cout << "From " << ret.start << " to " << ret.end << " with value " << ret.sum << '\n';
+
+    SignedContainer::value_type ith_stat = OrderStatistic<SignedContainer>::Search(to_search, count >> 2);
+    std::cout << "Order Statistic: Finding " << (count >> 2) << "th stat, " << ith_stat << '\n';
     
     int temp;
     std::cin >> temp;

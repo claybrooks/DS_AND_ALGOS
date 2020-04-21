@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sort.hpp"
+#include "Sorter.hpp"
 #include <random>
 
 namespace Algorithms
@@ -13,6 +13,7 @@ namespace Sort
         static Compare<typename Container::value_type> s_compare;
 
     public:
+        using compare = Compare<typename Container::value_type>;
 
         static inline void Sort(
             Container& A
@@ -58,6 +59,25 @@ namespace Sort
             }
         }
 
+        static typename Container::size_type RANDOMIZED_PARTITION(
+            Container& A,
+            int start,
+            int end
+        )
+        {
+            // Get a uniform distribution from the random engine
+            //std::uniform_int_distribution<Container::size_type> distr(start, end);
+            //Container::size_type i = distr(s_eng);
+
+            int i = my_rand(start, end);
+
+            // Swap the pivot to the end
+            std::swap(A[end], A[i]);
+
+            // Partition like normal
+            return PARTITION(A, start, end);
+        }
+
     private:
 
         static inline unsigned long x = 123456789, y = 362436069, z = 521288629;
@@ -76,31 +96,9 @@ namespace Sort
             return z;
         }
 
-        static inline int my_rand(
-            int low, 
-            int high
-        )
+        static inline int my_rand(int low, int high)
         {
             return low + (xorshf96() % (high - low));
-        }
-
-        static typename Container::size_type RANDOMIZED_PARTITION(
-            Container& A,
-            int start,
-            int end
-        )
-        {
-            // Get a uniform distribution from the random engine
-            //std::uniform_int_distribution<Container::size_type> distr(start, end);
-            //Container::size_type i = distr(s_eng);
-
-            int i = my_rand(start, end);
-
-            // Swap the pivot to the end
-            std::swap(A[end], A[i]);
-
-            // Partition like normal
-            return PARTITION(A, start, end);
         }
 
         static typename Container::size_type PARTITION(
@@ -123,8 +121,8 @@ namespace Sort
             }
 
             // Place the pivot
-            std::swap(A[i+1], A[end]);
-            return i+1;
+            std::swap(A[(Container::size_type)i+1], A[end]);
+            return (Container::size_type)i+1;
         }
     };
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sort.hpp"
+#include "Sorter.hpp"
 
 namespace Algorithms
 {
@@ -14,6 +14,8 @@ namespace Sort
         static Compare<typename Container::value_type> s_compare;
 
     public:
+        using compare = Compare<typename Container::value_type>;
+
         static inline void Sort(
             Container& A
         )
