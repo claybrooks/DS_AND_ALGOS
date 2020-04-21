@@ -10,470 +10,470 @@ namespace Heaps {
         typename T,
         template<typename> class Compare
     >
-        class BinomialHeap {
+    class BinomialHeap {
+    public:
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        typedef struct Node
+        {
         public:
-
-            /***************************************************************************************************************
+            /***********************************************************************************************************
             *
             *
-            ***************************************************************************************************************/
-            typedef struct Node
+            ***********************************************************************************************************/
+            Node(const T& keyVal) :
+                left(this),
+                right(this),
+                parent(nullptr),
+                child(nullptr),
+                degree(0),
+                mark(false),
+                key(keyVal),
+                being_removed(false)
             {
-            public:
-                /***********************************************************************************************************
-                *
-                *
-                ***********************************************************************************************************/
-                Node(const T& keyVal) :
-                    left(this),
-                    right(this),
-                    parent(nullptr),
-                    child(nullptr),
-                    degree(0),
-                    mark(false),
-                    key(keyVal),
-                    being_removed(false)
-                {
-                }
-
-                /***********************************************************************************************************
-                *
-                *
-                ***********************************************************************************************************/
-                static void Clear(Node* node)
-                {
-                    if (!node) { return; }
-
-                    node->left = node;
-                    node->right = node;
-                    node->parent = nullptr;
-                    node->child = nullptr;
-                    node->degree = 0;
-                    node->mark = false;
-                    node->being_removed = false;
-                }
-
-                /***********************************************************************************************************
-                *
-                *
-                ***********************************************************************************************************/
-                inline T Key()
-                {
-                    return key;
-                }
-
-            private:
-                // Make a friend class so we can access privates directly
-                friend BinomialHeap;
-
-                Node* left;
-                Node* right;
-                Node* parent;
-                Node* child;
-                int degree;
-                bool mark;
-                bool being_removed;
-                T key;
-                //std::string debug_name = "";
-
-            } Node;
-
-            // Helpful using clause for external users
-            using NODE_TYPE = Node*;
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            BinomialHeap()
-                : m_count(0)
-                , m_doubled_size(50)
-                , m_degree_array(nullptr)
-                , m_dn(0)
-                , m_top(nullptr)
-            {
-                ResizeDegreeArray(m_doubled_size);
             }
 
-            ~BinomialHeap()
+            /***********************************************************************************************************
+            *
+            *
+            ***********************************************************************************************************/
+            static void Clear(Node* node)
             {
-                // Delete all nodes
-                Clear(m_top);
+                if (!node) { return; }
 
-                // Delete the degree array
-                if (m_degree_array)
-                {
-                    delete[] m_degree_array;
-                }
+                node->left = node;
+                node->right = node;
+                node->parent = nullptr;
+                node->child = nullptr;
+                node->degree = 0;
+                node->mark = false;
+                node->being_removed = false;
             }
 
-            /***************************************************************************************************************
+            /***********************************************************************************************************
             *
             *
-            ***************************************************************************************************************/
-            BinomialHeap(BinomialHeap&) = delete;
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            BinomialHeap(BinomialHeap&&) = delete;
-
-            /***************************************************************************************************************
-                *
-                *
-                ***************************************************************************************************************/
-            bool BinomialHeap::Empty() const
+            ***********************************************************************************************************/
+            inline T Key()
             {
-                return !m_count;
-            }
-
-            /***************************************************************************************************************
-                *
-                *
-                ***************************************************************************************************************/
-            bool BinomialHeap::Count() const
-            {
-                return m_count;
-            }
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE Insert(const T& value)
-            {
-                // Create the new node
-                NODE_TYPE new_node = new Node(value);
-
-                return Insert(new_node);
-            }
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE Insert(NODE_TYPE node)
-            {
-                if (!node)
-                {
-                    return node;
-                }
-
-                // Insert into our root list
-                InsertImpl(node);
-
-                // Return back to caller
-                return node;
-            }
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void Merge(BinomialHeap& heap)
-            {
-                // Merge the two heaps
-                m_top = MergeImpl(m_top, heap.m_top);
-
-                // Update the count
-                m_count += heap.m_count;
-
-                // Invalidate the heap that was given to us
-                heap.m_top = nullptr;
-                heap.m_count = 0;
-            }
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE Top()
-            {
-                // Just return to the user
-                return m_top;
-            }
-
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE ExtractTop()
-            {
-                return ExtractTopImpl();
+                return key;
             }
 
         private:
-            /***************************************************************************************************************
+            // Make a friend class so we can access privates directly
+            friend BinomialHeap;
+
+            Node* left;
+            Node* right;
+            Node* parent;
+            Node* child;
+            int degree;
+            bool mark;
+            bool being_removed;
+            T key;
+            //std::string debug_name = "";
+
+        } Node;
+
+        // Helpful using clause for external users
+        using NODE_TYPE = Node*;
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        BinomialHeap()
+            : m_count(0)
+            , m_doubled_size(50)
+            , m_degree_array(nullptr)
+            , m_dn(0)
+            , m_top(nullptr)
+        {
+            ResizeDegreeArray(m_doubled_size);
+        }
+
+        ~BinomialHeap()
+        {
+            // Delete all nodes
+            Clear(m_top);
+
+            // Delete the degree array
+            if (m_degree_array)
+            {
+                delete[] m_degree_array;
+            }
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        BinomialHeap(BinomialHeap&) = delete;
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        BinomialHeap(BinomialHeap&&) = delete;
+
+        /***************************************************************************************************************
             *
             *
             ***************************************************************************************************************/
-            void ResizeDegreeArray(unsigned int count)
+        bool BinomialHeap::Empty() const
+        {
+            return !m_count;
+        }
+
+        /***************************************************************************************************************
+            *
+            *
+            ***************************************************************************************************************/
+        bool BinomialHeap::Count() const
+        {
+            return m_count;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE Insert(const T& value)
+        {
+            // Create the new node
+            NODE_TYPE new_node = new Node(value);
+
+            return Insert(new_node);
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE Insert(NODE_TYPE node)
+        {
+            if (!node)
             {
-                // Delete m_degree_array if necessary
-                if (m_degree_array)
-                {
-                    delete[] m_degree_array;
-                }
-
-                // Recalculate m_dn
-                m_dn = ((int)log2(count)) + 1;
-
-                // Allocate a new array
-                m_degree_array = new NODE_TYPE[m_dn];
+                return node;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void InsertImpl(NODE_TYPE new_node)
+            // Insert into our root list
+            InsertImpl(node);
+
+            // Return back to caller
+            return node;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void Merge(BinomialHeap& heap)
+        {
+            // Merge the two heaps
+            m_top = MergeImpl(m_top, heap.m_top);
+
+            // Update the count
+            m_count += heap.m_count;
+
+            // Invalidate the heap that was given to us
+            heap.m_top = nullptr;
+            heap.m_count = 0;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE Top()
+        {
+            // Just return to the user
+            return m_top;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE ExtractTop()
+        {
+            return ExtractTopImpl();
+        }
+
+    private:
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void ResizeDegreeArray(unsigned int count)
+        {
+            // Delete m_degree_array if necessary
+            if (m_degree_array)
             {
-                // Combine our lists
-                m_top = MergeImpl(m_top, new_node);
-
-                // Update our count
-                ++m_count;
-
-                // Figure out if we need to resize the dn array
-                if (m_count > m_doubled_size)
-                {
-                    // Double it
-                    m_doubled_size *= 2;
-
-                    ResizeDegreeArray(m_doubled_size);
-                }
+                delete[] m_degree_array;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void RemoveFromCircularList(NODE_TYPE node)
-            {
-                // Node is only thing in circular list
-                if (node->right == node)
-                {
-                    return;
-                }
+            // Recalculate m_dn
+            m_dn = ((int)log2(count)) + 1;
 
-                // Swap left and right pointers
-                node->left->right = node->right;
-                node->right->left = node->left;
+            // Allocate a new array
+            m_degree_array = new NODE_TYPE[m_dn];
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void InsertImpl(NODE_TYPE new_node)
+        {
+            // Combine our lists
+            m_top = MergeImpl(m_top, new_node);
+
+            // Update our count
+            ++m_count;
+
+            // Figure out if we need to resize the dn array
+            if (m_count > m_doubled_size)
+            {
+                // Double it
+                m_doubled_size *= 2;
+
+                ResizeDegreeArray(m_doubled_size);
+            }
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void RemoveFromCircularList(NODE_TYPE node)
+        {
+            // Node is only thing in circular list
+            if (node->right == node)
+            {
+                return;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE MergeImpl(NODE_TYPE main, NODE_TYPE secondary)
+            // Swap left and right pointers
+            node->left->right = node->right;
+            node->right->left = node->left;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE MergeImpl(NODE_TYPE main, NODE_TYPE secondary)
+        {
+            // There is no main, secondary becomes main
+            if (!main)
             {
-                // There is no main, secondary becomes main
-                if (!main)
-                {
-                    return secondary;
-                }
+                return secondary;
+            }
 
-                // There is no secondary, main stays untouched
-                if (!secondary)
-                {
-                    return main;
-                }
-
-                // Ensure that the node returned is always the max/min
-                if (m_heap_property(secondary->key, main->key))
-                {
-                    std::swap(main, secondary);
-                }
-
-                // Store temporary pointers
-                NODE_TYPE main_right = main->right;
-                NODE_TYPE secondary_left = secondary->left;
-
-                // Link the two lists
-                main->right = secondary;
-                secondary->left = main;
-
-                // Fill in the gaps
-                main_right->left = secondary_left;
-                secondary_left->right = main_right;
-
+            // There is no secondary, main stays untouched
+            if (!secondary)
+            {
                 return main;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            NODE_TYPE ExtractTopImpl()
+            // Ensure that the node returned is always the max/min
+            if (m_heap_property(secondary->key, main->key))
             {
-                NODE_TYPE top = m_top;
+                std::swap(main, secondary);
+            }
 
-                // We have no max pointer
-                if (!top)
-                {
-                    return top;
-                }
+            // Store temporary pointers
+            NODE_TYPE main_right = main->right;
+            NODE_TYPE secondary_left = secondary->left;
 
-                // Orphan all children of max
-                OrphanAll(top->child);
+            // Link the two lists
+            main->right = secondary;
+            secondary->left = main;
 
-                // Merge all children into top level list
-                MergeImpl(top, top->child);
+            // Fill in the gaps
+            main_right->left = secondary_left;
+            secondary_left->right = main_right;
 
-                // Remove max from circular list
-                RemoveFromCircularList(top);
+            return main;
+        }
 
-                // If top is the only thing in the list, top is now null
-                if (top == top->right)
-                {
-                    m_top = nullptr;
-                }
-                // Just move top to the right, and handle updating it in the consolidate function
-                else
-                {
-                    m_top = top->right;
-                    Consolidate();
-                }
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        NODE_TYPE ExtractTopImpl()
+        {
+            NODE_TYPE top = m_top;
 
-                --m_count;
-
-                // Invalidate top that is returned
-                Node::Clear(top);
-
+            // We have no max pointer
+            if (!top)
+            {
                 return top;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void OrphanAll(NODE_TYPE node)
+            // Orphan all children of max
+            OrphanAll(top->child);
+
+            // Merge all children into top level list
+            MergeImpl(top, top->child);
+
+            // Remove max from circular list
+            RemoveFromCircularList(top);
+
+            // If top is the only thing in the list, top is now null
+            if (top == top->right)
             {
-                NODE_TYPE iter = node;
-                do
-                {
-                    iter->parent = nullptr;
-                    iter = iter->right;
-                } while(iter != node);
+                m_top = nullptr;
+            }
+            // Just move top to the right, and handle updating it in the consolidate function
+            else
+            {
+                m_top = top->right;
+                Consolidate();
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void Consolidate()
+            --m_count;
+
+            // Invalidate top that is returned
+            Node::Clear(top);
+
+            return top;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void OrphanAll(NODE_TYPE node)
+        {
+            NODE_TYPE iter = node;
+            do
             {
-                // clear the m_degree_array array
-                memset(m_degree_array, 0, sizeof(NODE_TYPE) * m_dn);
+                iter->parent = nullptr;
+                iter = iter->right;
+            } while(iter != node);
+        }
 
-                NODE_TYPE parent = m_top;
-                bool quit = false;
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void Consolidate()
+        {
+            // clear the m_degree_array array
+            memset(m_degree_array, 0, sizeof(NODE_TYPE) * m_dn);
 
-                while (!quit)
+            NODE_TYPE parent = m_top;
+            bool quit = false;
+
+            while (!quit)
+            {
+                int d = parent->degree;
+                while (m_degree_array[d] != nullptr)
                 {
-                    int d = parent->degree;
-                    while (m_degree_array[d] != nullptr)
+                    NODE_TYPE child = m_degree_array[d];
+
+                    // this is our exit condition.  All things have been consolidated
+                    if (child == parent)
                     {
-                        NODE_TYPE child = m_degree_array[d];
-
-                        // this is our exit condition.  All things have been consolidated
-                        if (child == parent)
-                        {
-                            quit = true;
-                            break;
-                        }
-
-                        if (m_heap_property(child->key, parent->key))
-                        {
-                            std::swap(parent, child);
-                        }
-
-                        MakeChild(child, parent);
-                        m_degree_array[d++] = nullptr;
+                        quit = true;
+                        break;
                     }
-                    if (!quit)
+
+                    if (m_heap_property(child->key, parent->key))
                     {
-                        m_degree_array[parent->degree] = parent;
-                        parent = parent->right;
+                        std::swap(parent, child);
                     }
+
+                    MakeChild(child, parent);
+                    m_degree_array[d++] = nullptr;
+                }
+                if (!quit)
+                {
+                    m_degree_array[parent->degree] = parent;
+                    parent = parent->right;
+                }
+            }
+
+            // Update the max node
+            m_top = parent;
+            UpdateMax();
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void MakeChild(NODE_TYPE child, NODE_TYPE parent)
+        {
+            RemoveFromCircularList(child);
+            child->left = child;
+            child->right = child;
+            child->parent = parent;
+            parent->child = MergeImpl(parent->child, child);
+            child->mark = false;
+            ++parent->degree;
+        }
+
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void UpdateMax()
+        {
+            NODE_TYPE start = m_top;
+            NODE_TYPE iter = m_top;
+            do
+            {
+                if (m_heap_property(next->key, m_top->key))
+                {
+                    m_top = next;
                 }
 
-                // Update the max node
-                m_top = parent;
-                UpdateMax();
-            }
+                iter = iter->right;
+            } while (iter != start);
+        }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void MakeChild(NODE_TYPE child, NODE_TYPE parent)
+        /***************************************************************************************************************
+        *
+        *
+        ***************************************************************************************************************/
+        void Clear(NODE_TYPE node)
+        {
+            if (!node)
             {
-                RemoveFromCircularList(child);
-                child->left = child;
-                child->right = child;
-                child->parent = parent;
-                parent->child = MergeImpl(parent->child, child);
-                child->mark = false;
-                ++parent->degree;
+                return;
             }
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void UpdateMax()
+            NODE_TYPE iter = node;
+            do
             {
-                NODE_TYPE start = m_top;
-                NODE_TYPE iter = m_top;
-                do
-                {
-                    if (m_heap_property(next->key, m_top->key))
-                    {
-                        m_top = next;
-                    }
+                NODE_TYPE tmp = iter;
+                iter = iter->right;
 
-                    iter = iter->right;
-                } while (iter != start);
-            }
+                Clear(tmp->child);
+                delete tmp;
 
-            /***************************************************************************************************************
-            *
-            *
-            ***************************************************************************************************************/
-            void Clear(NODE_TYPE node)
-            {
-                if (!node)
-                {
-                    return;
-                }
+            } while (iter != node);
+        }
 
-                NODE_TYPE iter = node;
-                do
-                {
-                    NODE_TYPE tmp = iter;
-                    iter = iter->right;
+        // How many things are in this heap
+        unsigned int m_count;
 
-                    Clear(tmp->child);
-                    delete tmp;
+        // Used to dynamically re-size m_degree_array array for consolidate
+        unsigned int m_doubled_size;
+        NODE_TYPE* m_degree_array;
+        unsigned int m_dn;
 
-                } while (iter != node);
-            }
+        // Top of the heap
+        NODE_TYPE m_top;
 
-            // How many things are in this heap
-            unsigned int m_count;
-
-            // Used to dynamically re-size m_degree_array array for consolidate
-            unsigned int m_doubled_size;
-            NODE_TYPE* m_degree_array;
-            unsigned int m_dn;
-
-            // Top of the heap
-            NODE_TYPE m_top;
-
-            // Comparison function to determine max/min heap
-            Compare<T> m_heap_property;
+        // Comparison function to determine max/min heap
+        Compare<T> m_heap_property;
     };
 
     template <typename T>

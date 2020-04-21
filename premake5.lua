@@ -39,9 +39,9 @@ project "Datastructures"
 
 	files
 	{
-		"%{prj.name}/heaps/**.hpp",
-		"%{prj.name}/heaps/**.cpp",
-		"%{prj.name}/GenLib.cpp"
+		"%{prj.name}/*.cpp",
+		"%{prj.name}/heaps/**",
+		"%{prj.name}/trees/**"
 	}
 
 	defines
@@ -92,11 +92,9 @@ project "Algorithms"
 
 	files
 	{
-		"%{prj.name}/sort/**.hpp",
-		"%{prj.name}/sort/**.cpp",
-		"%{prj.name}/search/**.hpp",
-		"%{prj.name}/search/**.cpp",
-		"%{prj.name}/GenLib.cpp"
+		"%{prj.name}/*.cpp",
+		"%{prj.name}/sort/**",
+		"%{prj.name}/search/**"
 	}
 
 	defines
@@ -156,6 +154,7 @@ project "Test"
 	includedirs
 	{
 		"Datastructures/heaps",
+		"Datastructures/trees",
 		"Algorithms/sort",
 		"Algorithms/search"
 	}

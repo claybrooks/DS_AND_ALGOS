@@ -11,6 +11,8 @@
 #include "PairingHeap.hpp"
 #include "BinomialHeap.hpp"
 #include "BinaryHeap.hpp"
+#include "BinarySearchTree.hpp"
+#include "AVLTree.hpp"
 
 // Sorting
 #include "MergeSort.hpp"
@@ -27,6 +29,7 @@
 #include "OrderStatistic.hpp"
 
 using namespace Datastructures::Heaps;
+using namespace Datastructures::Trees;
 using namespace Algorithms::Sort;
 using namespace Algorithms::Search;
 
@@ -534,6 +537,28 @@ bool validate_sort(const Container& A)
 
 int main()
 {
+    BinarySearchTree<int> bst;
+    bst.Insert(5);
+    bst.Insert(4);
+    bst.Insert(3);
+    bst.Insert(5);
+    bst.Remove(5);
+    bst.Remove(5);
+
+    AVLTree<int> tree;
+    tree.Insert(5);
+    tree.Insert(4);
+    tree.Insert(3);
+    tree.Insert(6);
+    tree.Insert(7);
+    tree.Insert(1);
+    tree.Insert(2);
+    tree.Insert(8);
+    tree.Insert(9);
+    tree.Insert(5);
+    tree.Remove(5);
+    tree.Remove(5);
+ 
     // Sed the rand
     srand(static_cast<int>(time(0)));
 
